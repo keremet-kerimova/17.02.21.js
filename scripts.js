@@ -1,49 +1,38 @@
-let table = document.createElement("table");
-let th = document.createElement("th");
-let td = document.createElement("td");
 
+let table = document.createElement('table');
+let tr = document.createElement('tr');
+let th1 = document.createElement('th');
+let th2 = document.createElement('th');
+let th3 = document.createElement('th');
 
+th1.innerText = "Place";
+th2.innerText = "Name";
+th3.innerText = "Wealth";
 
-fetch("./data.json").then(function(response) {
-    response.json().then(function(json) {
-        for (let i in json.todo) {
-            let li = returnListItem(json.todo[i]);
-            if (li) {
-                ul.append(li);
-            }
-        }
+table.append(tr);
+tr.append(th1);
+tr.append(th2);
+tr.append(th3);
+document.body.append(table);
+
+fetch('./task.json')
+    .then(function(response){
+        return response.json();
     })
-})
-
-// button.addEventListener("click", function () {
-//     let li = returnListItem(input.value);
-//     if (li) {
-//         input.value = '';
-//         ul.append(li);
-//     }
-// });
-
-// function returnListItem(text = '') {
-//     if (!text.trim()) {
-//         return false;
-//     }
-
-//     let li = document.createElement("li");
-//     let button = document.createElement("button");
-//     let span = document.createElement("span");
-
-//     button.innerText = "-";
-//     span.innerText = text;
-
-//     button.addEventListener("click", function () {
-//         li.remove();
-//     });
-//     span.addEventListener("click", function () {
-//         span.classList.toggle('done');
-//     });
-
-//     li.append(span);
-//     li.append(button);
-    
-//     return li;
-// }
+    .then(function(json){
+        for (const key in json) {
+            let tr = document.createElement('tr');
+            let td1 = document.createElement('td');
+            let td2 = document.createElement('td');
+            let td3 = document.createElement('td');
+            
+            td1.innerText = json[key].id;
+            td2.innerText = json[key].name;
+            td3.innerText = json[key].wealth;
+        
+            table.append(tr);
+            tr.append(td1);
+            tr.append(td2);
+            tr.append(td3);
+        }
+    });
