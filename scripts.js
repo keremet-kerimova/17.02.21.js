@@ -1,38 +1,64 @@
 
-let table = document.createElement('table');
-let tr = document.createElement('tr');
-let th1 = document.createElement('th');
-let th2 = document.createElement('th');
-let th3 = document.createElement('th');
+let ul = document.createElement("ul");
+let input = document.querySelector("input");
+let button = document.querySelector("button");
 
-th1.innerText = "Place";
-th2.innerText = "Name";
-th3.innerText = "Wealth";
+document.body.append(ul);
 
-table.append(tr);
-tr.append(th1);
-tr.append(th2);
-tr.append(th3);
-document.body.append(table);
+let interval = setInterval(function () {
+    fetch("https://ita-ajax-default-rtdb.firebaseio.com/list.json")
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(list) {
+            ul.innerHTML = "";
 
-fetch('./task.json')
-    .then(function(response){
-        return response.json();
+            for (let i in list) {
+                let li = returnListItem(list[i]);
+                if (li) {
+                    ul.append(li);
+                }
+            }
+        });
+}, 2000);
+
+button.addEventListener("click", function () {
+    fetch("https://ita-ajax-default-rtdb.firebaseio.com/list.json", {
+        method: "POST",
+        body: JSON.stringify(input.value),
     })
-    .then(function(json){
-        for (const key in json) {
-            let tr = document.createElement('tr');
-            let td1 = document.createElement('td');
-            let td2 = document.createElement('td');
-            let td3 = document.createElement('td');
-            
-            td1.innerText = json[key].id;
-            td2.innerText = json[key].name;
-            td3.innerText = json[key].wealth;
-        
-            table.append(tr);
-            tr.append(td1);
-            tr.append(td2);
-            tr.append(td3);
+    .then(function(response) {
+        if (response.ok) {
+            let li = returnListItem(input.value);
+            if (li) {
+                input.value = '';
+                ul.append(li);
+            }
         }
     });
+});
+
+function returnListItem(text = '') {
+    if (!text.trim()) {
+        return false;
+    }
+
+    let li = document.createElement("li");
+    let button = document.createElement("button");
+    let span = document.createElement("span");
+
+    button.innerText = "-";
+    span.innerText = text;
+
+    button.addEventListener("click", function () {
+        li.remove();
+    });
+    span.addEventListener("click", function () {
+        span.classList.toggle('done');
+    });
+
+    li.append(span);
+    li.append(button);
+    
+    return li;
+}
